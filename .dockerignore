@@ -1,0 +1,30 @@
+# Ignore local environment & git
+.git
+.gitignore
+.env
+.env.*
+
+# Ignore frontend (deployed separately on Vercel)
+frontend/
+
+# Ignore massive training datasets
+data/
+
+# Ignore Jupyter notebooks & evaluation runs
+notebooks/
+evaluation/
+tests/
+
+# Ignore unneeded model checkpoints & optimizer states
+models/**/optimizer.pt
+models/**/rng_state.pth
+models/**/scheduler.pt
+models/**/training_args.bin
+models/distilbert_final/
+models/distilbert_test/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.log

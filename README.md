@@ -1,22 +1,35 @@
 # TruthLens AI — AI-Powered Fake News Detection & Evidence-Based Fact Verification
 
-> **"TruthLens AI doesn't just tell you whether news is fake — it investigates the claims, finds the evidence, and explains why."**
+> **"TruthLens AI doesn't just predict whether news looks fake — it extracts the claims, searches real-time live evidence, and explains why."**
 
-[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![PyTorch](https://img.shields.io/badge/ML-PyTorch%20%7C%20Transformers-EE4C2C.svg?style=flat&logo=pytorch)](https://pytorch.org/)
-[![XGBoost](https://img.shields.io/badge/ML-XGBoost-15B8EC.svg?style=flat)](https://xgboost.readthedocs.io/)
-[![React](https://img.shields.io/badge/Frontend-React%2019%20%2B%20Vite-61DAFB.svg?style=flat&logo=react)](https://vitejs.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Live Demo](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![Backend API](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render)](https://truthlens-ai-wag8.onrender.com)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![React 19](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 1. Project Overview
+## Live Deployments & Endpoints
 
-Conventional fake news detectors operate as black-box binary text classifiers. While effective at recognizing journalistic stylistic markers on dataset-specific corpora (such as Reuters vs. hyperpartisan blogs in the ISOT dataset), they **cannot verify empirical real-world factual claims**. 
+| Service | Hosting | Status | URL |
+| :--- | :--- | :---: | :--- |
+| **Web Dashboard** | **Vercel** | 🟢 Live | `https://<your-app>.vercel.app` |
+| **FastAPI Backend** | **Render** | 🟢 Live | [`https://truthlens-ai-wag8.onrender.com`](https://truthlens-ai-wag8.onrender.com) |
+| **Interactive Docs** | **Swagger UI** | 🟢 Live | [`https://truthlens-ai-wag8.onrender.com/docs`](https://truthlens-ai-wag8.onrender.com/docs) |
+| **System Health** | **JSON Endpoint** | 🟢 Live | [`https://truthlens-ai-wag8.onrender.com/health`](https://truthlens-ai-wag8.onrender.com/health) |
 
-**TruthLens AI** establishes a **dual-tier research architecture** that cleanly separates:
-1. **Article Stylistic Classification:** Deep transformer (`distilbert-base-uncased`) and classical ML baselines (Logistic Regression, Naive Bayes, and **XGBoost**) to assess stylistic manipulation and writing patterns.
-2. **Evidence-Based Factual Verification:** A Retrieval-Augmented Generation (RAG) pipeline that extracts verifiable factual propositions, queries multi-source live knowledge bases (Wikipedia and Web Search), ranks passages by lexical/semantic relevance, conducts stance detection, evaluates source credibility, and synthesizes an explainable verification report.
+---
+
+## 1. Project Overview & Research Contribution
+
+Conventional fake news detectors operate as black-box binary classifiers. While effective at recognizing dataset-specific journalistic markers (such as Reuters styling vs. hyperpartisan clickbait in benchmark datasets), they **cannot verify empirical real-world factual claims**. A completely fabricated lie written in formal journalistic tone will fool standard classifiers, while genuine breaking news written casually may be misclassified as fake.
+
+**TruthLens AI** introduces a **dual-tier research architecture** that cleanly decouples:
+
+1. **Article Stylistic Classification (The "Form"):** Deep transformer (`distilbert-base-uncased`) and classical machine learning baselines (**XGBoost**, Logistic Regression, Naive Bayes) evaluate writing syntax, manipulative phrasing, and ISOT dataset stylistic n-grams.
+2. **Evidence-Based Fact Verification (The "Truth"):** A real-time Retrieval-Augmented Generation (RAG) pipeline that segments text into verifiable factual propositions, queries multi-source live knowledge bases (**Google News RSS**, **Wikipedia API**, and **Web Search**), computes semantic passage relevance, conducts stance detection, checks source credibility, and synthesizes an evidence-grounded verdict.
 
 ---
 
@@ -27,186 +40,203 @@ Conventional fake news detectors operate as black-box binary text classifiers. W
                                         │
                                         ▼
                             INPUT VALIDATION & SANITIZATION
+                       (Strip Web Boilerplate / Normalization)
                                         │
-                 ┌──────────────────────┴──────────────────────┐
-                 ▼                                             ▼
-     ARTICLE CLASSIFICATION (Style)                FACT VERIFICATION (Truth)
-                 │                                             │
-      ┌──────────┴──────────┐                                  ▼
-      │                     │                          CLAIM EXTRACTION
-  DistilBERT             XGBoost                 (Verifiable Proposition Filter)
- (Checkpoint-7821)    (Hist 300 Trees)                         │
-  Acc: 99.87%          Acc: 99.65%                             ▼
-                                                       EVIDENCE RETRIEVAL
-                                                 (Wikipedia + DuckDuckGo APIs)
-                                                               │
-                                                               ▼
-                                                       EVIDENCE RANKING
-                                                  (Semantic + Stance Detection)
-                                                               │
-                                                               ▼
-                                                         RAG PIPELINE
-                                                 (Prompt Injection Sandboxing)
-                                                               │
-                                                               ▼
-                                                      LLM REASONING ENGINE
-                                                 (Groq / OpenAI / Offline Fallback)
-                                                               │
-                                                               ▼
-                                                  SOURCE CREDIBILITY ANALYSIS
-                                                 (Domain Standing & Corroboration)
-                                                               │
-                 ┌─────────────────────────────────────────────┘
-                 ▼
-     SYNTHESIZED VERIFICATION DASHBOARD
-     - Article Classification (Style Pattern)
-     - Factual Verdict (TRUE, MOSTLY TRUE, PARTIALLY TRUE, FALSE, UNVERIFIED)
-     - Extracted Claims Breakdown
-     - Supporting & Contradicting Evidence Cards (with clickable URLs)
-     - Source Reliability Tiers & Corroboration Score
-     - Evidence-Grounded Reasoning & Disclaimers
+                  ┌─────────────────────┴─────────────────────┐
+                  ▼                                           ▼
+      TIER 1: ARTICLE STYLE CLASSIFICATION        TIER 2: EVIDENCE-BASED FACT VERIFICATION
+                  │                                           │
+       ┌──────────┴──────────┐                                ▼
+       │                     │                        CLAIM EXTRACTION
+   DistilBERT             XGBoost               (Verifiable Proposition Filter)
+  (Checkpoint-7821)    (Hist 300 Trees)                       │
+   Acc: 99.87%          Acc: 99.65%                           ▼
+                                                      EVIDENCE RETRIEVAL
+                                             ┌────────────────┼────────────────┐
+                                             ▼                ▼                ▼
+                                        Google News       Wikipedia        DuckDuckGo
+                                        (Live News)     (Encyclopedia)    (Web Search)
+                                             └────────────────┬────────────────┘
+                                                              │
+                                                              ▼
+                                                      EVIDENCE RANKING
+                                               (Lexical + Semantic Overlap)
+                                                              │
+                                                              ▼
+                                                      STANCE DETECTION
+                                            (Supporting vs. Contradicting Cues)
+                                                              │
+                                                              ▼
+                                                 SOURCE CREDIBILITY ANALYSIS
+                                              (Domain Standing & Corroboration)
+                                                              │
+                                                              ▼
+                                                     RAG REASONING ENGINE
+                                            (Groq Llama-3.3 / OpenAI / Offline)
+                                                              │
+                  ┌───────────────────────────────────────────┘
+                  ▼
+      SYNTHESIZED VERIFICATION DASHBOARD
+      ├── 1. Stylistic Prediction & Probabilities (DistilBERT / XGBoost)
+      ├── 2. Factual Verdict (TRUE, MOSTLY TRUE, PARTIALLY TRUE, FALSE, INSUFFICIENT EVIDENCE)
+      ├── 3. Extracted Propositions & Individual Claim Verdicts
+      ├── 4. Supporting & Contradicting Evidence Cards (Clickable Direct Links)
+      ├── 5. Evaluated Domains & Corroboration Score
+      └── 6. Evidence-Grounded Reasoning & Explanation
 ```
 
 ---
 
-## 3. Empirical Model Performance & Benchmarks
+## 3. Empirical Model Benchmarks
 
-All models were evaluated on the held-out test split of the deduplicated **ISOT Fake News Dataset** (39,103 articles; 21,196 Real, 17,907 Fake; 80/20 stratified train/test split):
+All models were evaluated on the held-out test split of the deduplicated **ISOT Fake News Dataset** (39,103 articles: 21,196 Real, 17,907 Fake; 80/20 stratified train/test split):
 
 | Model Architecture | Feature Representation / Tokens | Accuracy | Precision | Recall | F1 Score | Latency (ms/sample) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **DistilBERT** (Fine-Tuned Checkpoint-7821) | Transformer Wordpiece (Max 256 tokens) | **99.87%** | **99.91%** | **99.86%** | **99.88%** | ~12.50 ms |
+| **DistilBERT** (Fine-Tuned Checkpoint-7821) | Transformer WordPiece (Max 256 tokens) | **99.87%** | **99.91%** | **99.86%** | **99.88%** | ~12.50 ms |
 | **TF-IDF + XGBoost** (300 Hist Trees) | 50,000 N-Grams (1,2), Subsample 0.8 | **99.65%** | **99.51%** | **99.86%** | **99.68%** | **0.066 ms** |
 | **TF-IDF + Logistic Regression** | 50,000 N-Grams (Title + Text) | 98.61% | 98.11% | 99.34% | 98.72% | 0.082 ms |
 | **TF-IDF + Naive Bayes** | 50,000 N-Grams (Title + Text) | 95.69% | 96.01% | 96.04% | 96.03% | 0.035 ms |
 | **TF-IDF + Logistic Regression** | Title Only | 94.23% | 93.38% | 96.18% | 94.76% | 0.040 ms |
-| **TF-IDF + Logistic Regression** | Source Cues Removed (No "Reuters") | 98.17% | 97.67% | 98.99% | 98.32% | 0.080 ms |
+| **TF-IDF + Logistic Regression** | Source Cues Removed (No "Reuters" leaks) | 98.17% | 97.67% | 98.99% | 98.32% | 0.080 ms |
 
-> **Evaluation Metric Artifacts:** Saved in [`evaluation/baseline_results.csv`](file:///e:/Truthlens-AI/evaluation/baseline_results.csv) and [`evaluation/xgboost_evaluation.json`](file:///e:/Truthlens-AI/evaluation/xgboost_evaluation.json).
+> **Evaluation Artifacts:** Stored in [`evaluation/baseline_results.csv`](evaluation/baseline_results.csv) and [`evaluation/xgboost_evaluation.json`](evaluation/xgboost_evaluation.json).
 
 ---
 
-## 4. Repository Structure
+## 4. Key Capabilities & Features
+
+* **Real-Time Live News Retrieval**: Integrates Google News RSS feeds to fetch breaking and regional news within minutes of publication across thousands of outlets (Reuters, AP, BBC, Indian Express, The Hindu, NDTV, CNN).
+* **Deep Anti-Hallucination Guardrails**: Adheres to strict evidence-grounded rules. If reliable primary passages cannot be verified, the system outputs `INSUFFICIENT EVIDENCE` (50% neutral confidence) rather than fabricating sources.
+* **Dual-Model Inference Switch**: Seamlessly toggle between fine-tuned **DistilBERT** (deep transformer representation) and **XGBoost** (ultra-low latency sub-millisecond classifier) directly from the UI.
+* **Entity-Aware Multi-Hop Search**: Intelligent query cleaner that strips copy-paste web noise (`Advertisement`, `Breaking:`, `Sponsored`) and extracts capitalized named entities to ensure maximum search hit rates.
+* **Automated Stance Detection**: Identifies contradiction tokens (*hoax*, *debunked*, *refuted*, *denied*, *fabricated*) versus corroboration tokens (*confirmed*, *official*, *recorded*).
+* **Independent Source Credibility Engine**: Classifies retrieved sources into credibility tiers (*Official/Institutional*, *Reputable News*, *General Web*, *Low Reliability*) and computes cross-source corroboration percentages.
+* **Modern Responsive UI**: Built with React 19, Vite, and Lucide icons, featuring dark mode, glassmorphism cards, interactive sample prompts, expandable claim breakdowns, and clickable reference citations.
+
+---
+
+## 5. Repository Structure
 
 ```
 TruthLens-AI/
 ├── backend/
 │   ├── api/
 │   │   ├── __init__.py
-│   │   └── routes.py              # Modular API endpoints (/api/verify, /api/classify, etc.)
+│   │   └── routes.py              # Modular FastAPI endpoints (/api/verify, /api/classify, etc.)
 │   ├── schemas/
 │   │   ├── __init__.py
-│   │   ├── request.py             # Pydantic v2 validation schemas
-│   │   └── response.py            # Typed response schemas
+│   │   ├── request.py             # Pydantic v2 input validation models
+│   │   └── response.py            # Typed response models with Swagger documentation
 │   ├── services/
 │   │   ├── __init__.py
-│   │   ├── classifier.py          # DistilBERT and XGBoost inference loaders
-│   │   ├── claim_extractor.py     # Verifiable claim segmentation & filtering
-│   │   ├── evidence_retriever.py  # Multi-source retrieval (Wikipedia, DuckDuckGo)
-│   │   ├── evidence_ranker.py     # Stance detection & lexical/semantic ranking
-│   │   ├── rag_pipeline.py        # Context prompt assembly & injection defense
-│   │   ├── llm_verifier.py        # Groq/OpenAI reasoning + offline deterministic engine
-│   │   └── source_credibility.py  # Domain standing registry & corroboration analysis
+│   │   ├── classifier.py          # DistilBERT and XGBoost singleton model loaders
+│   │   ├── claim_extractor.py     # Proposition segmentation & factual filter
+│   │   ├── evidence_retriever.py  # Google News RSS, Wikipedia API & DuckDuckGo retriever
+│   │   ├── evidence_ranker.py     # Lexical/semantic relevance & stance detection
+│   │   ├── llm_verifier.py        # Groq (Llama-3.3), OpenAI, & Offline deterministic engines
+│   │   ├── rag_pipeline.py        # Sandboxed context prompt assembly
+│   │   └── source_credibility.py  # Domain reliability registry & corroboration analyzer
 │   ├── utils/
 │   │   ├── __init__.py
-│   │   └── preprocessing.py       # Cleaning, source cue stripping, text truncation
-│   ├── config.py                  # Dynamic path resolution & environment settings
-│   ├── main.py                    # FastAPI entrypoint with CORS, logging & lifespan
-│   ├── model_loader.py            # Backwards-compatible legacy inference wrapper
-│   └── requirements.txt
-├── data/
-│   ├── processed/
-│   │   └── truthlens_dataset.csv  # 39,103 cleaned articles (ISOT)
-│   └── raw/
-│       ├── Fake.csv
-│       └── True.csv
-├── evaluation/
-│   ├── baseline_results.csv       # Comparative benchmark table
-│   └── xgboost_evaluation.json   # Full confusion matrix & classification report
+│   │   └── preprocessing.py       # Text cleaning, boilerplate stripping & normalization
+│   ├── config.py                  # Dynamic path resolution & environment configuration
+│   └── main.py                    # FastAPI entrypoint with CORS, logging & lifespan handler
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   │   ├── App.jsx                # Upgraded dark-mode verification dashboard
-│   │   ├── App.css                # Polished UI with responsive layout
+│   │   ├── App.jsx                # Full-featured interactive verification dashboard
+│   │   ├── App.css                # Polished responsive dark-mode styling
 │   │   ├── main.jsx
 │   │   └── index.css
+│   ├── .env.example
 │   ├── package.json
+│   ├── vercel.json                # Single-page application route rewrite configuration
 │   └── vite.config.js
 ├── models/
 │   ├── distilbert_final_256/
-│   │   └── checkpoint-7821/       # Fine-tuned PyTorch safetensors & tokenizer
-│   ├── tfidf_vectorizer.joblib    # 50,000 n-gram fitted vectorizer
+│   │   └── checkpoint-7821/       # Fine-tuned PyTorch safetensors, tokenizer & configs
+│   ├── tfidf_vectorizer.joblib    # 50,000 n-gram fitted TF-IDF vectorizer
 │   └── xgboost_model.joblib       # 300-tree trained histogram XGBoost model
+├── evaluation/
+│   ├── baseline_results.csv       # Comparative baseline metrics
+│   └── xgboost_evaluation.json   # Full confusion matrix & classification report
 ├── notebooks/
 │   ├── 01_EDA.ipynb               # Exploratory data analysis & baseline benchmarks
 │   └── 02_DistilBERT.ipynb        # Fine-tuning pipeline & checkpoint evaluation
 ├── src/
 │   ├── evaluate.py                # Benchmark runner & display utility
-│   ├── preprocessing.py           # Pipeline preprocessing entrypoint
+│   ├── preprocessing.py           # Dataset preprocessing entrypoint
 │   ├── train.py                   # Model training launcher
 │   └── train_xgboost.py           # XGBoost training & evaluation script
 ├── tests/
-│   ├── test_api_basic.py          # API route tests
-│   └── test_full_suite.py         # 10 core verification scenario tests
-├── .env.example                   # Environment configuration template
-├── README.md                      # Comprehensive documentation
-└── requirements.txt
+│   ├── test_api_basic.py          # API route health & classification tests
+│   └── test_full_suite.py         # 10 comprehensive verification scenario tests
+├── .dockerignore
+├── .gitignore
+├── Dockerfile                     # Production CPU-optimized Docker container definition
+├── requirements.txt               # Backend Python dependencies
+└── README.md
 ```
 
 ---
 
-## 5. Getting Started (Windows / PowerShell Guide)
+## 6. Quickstart & Local Setup
 
 ### Prerequisites
-- Python 3.11+
-- Node.js 18+ & npm
+* **Python 3.11+**
+* **Node.js 18+ & npm**
+* **Git & Git LFS** (for models > 100 MB)
 
-### Step 1: Clone and Configure Environment
-Open PowerShell in the project directory:
-```powershell
-cd E:\Truthlens-AI
-
-# Create .env from template
-Copy-Item .env.example .env
+### Step 1: Clone Repository
+```bash
+git clone https://github.com/<YOUR_USERNAME>/Truthlens-AI.git
+cd Truthlens-AI
 ```
 
-To configure optional external LLM reasoning (Groq or OpenAI), edit `.env`:
+### Step 2: Configure Environment Variables
+```bash
+# Backend configuration
+copy .env.example .env
+```
+
+To enable cloud LLM reasoning (optional), add your key to `.env`:
 ```ini
 LLM_PROVIDER=groq
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=gsk_your_groq_api_key_here
 GROQ_MODEL=llama-3.3-70b-versatile
 ```
-*(Note: If no API keys are provided, TruthLens automatically runs its robust offline deterministic evidence reasoning engine).*
+*(If unconfigured, TruthLens runs its built-in offline deterministic reasoning engine).*
 
-### Step 2: Install Python Dependencies
-```powershell
-py -3.11 -m pip install -r requirements.txt
+### Step 3: Start FastAPI Backend
+```bash
+# Install Python dependencies (CPU-optimized PyTorch)
+pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements.txt
+
+# Launch FastAPI server
+uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
+The backend will be live at `http://127.0.0.1:8000` (Docs at `http://127.0.0.1:8000/docs`).
 
-### Step 3: Start the FastAPI Backend
-```powershell
-py -3.11 -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
-```
-The API is available at:
-- **API Root:** `http://127.0.0.1:8000`
-- **Swagger Interactive Docs:** `http://127.0.0.1:8000/docs`
-- **System Health Endpoint:** `http://127.0.0.1:8000/health`
-
-### Step 4: Start the React Frontend
-In a separate terminal window:
-```powershell
-cd E:\Truthlens-AI\frontend
+### Step 4: Start React Frontend
+In a new terminal window:
+```bash
+cd frontend
 npm install
 npm run dev
 ```
-Open your browser at `http://localhost:5173`.
+Open `http://localhost:5173` in your browser.
 
 ---
 
-## 6. API Reference
+## 7. API Reference
 
 ### Health Check
-`GET /health`
+```http
+GET /health
+```
+**Response:**
 ```json
 {
   "status": "healthy",
@@ -220,30 +250,11 @@ Open your browser at `http://localhost:5173`.
 }
 ```
 
-### Article Classification (Style Only)
-`POST /api/classify`
-```json
-{
-  "text": "WASHINGTON (Reuters) - The White House confirmed international talks.",
-  "model": "distilbert" // or "xgboost"
-}
-```
-**Response:**
-```json
-{
-  "model_name": "DistilBERT (Fine-Tuned ISOT, max_len=256)",
-  "predicted_label": "REAL",
-  "confidence": 0.99999,
-  "probabilities": {
-    "FAKE": 0.00001,
-    "REAL": 0.99999
-  },
-  "explanation": "DistilBERT transformer classification based on ISOT dataset style patterns."
-}
-```
-
 ### Full Verification Pipeline
-`POST /api/verify` or `POST /verify`
+```http
+POST /api/verify
+Content-Type: application/json
+```
 ```json
 {
   "text": "NASA's James Webb Space Telescope detected atmospheric water vapor on exoplanet WASP-96b.",
@@ -255,88 +266,88 @@ Open your browser at `http://localhost:5173`.
 **Response:**
 ```json
 {
-  "verdict": "REAL",
-  "confidence": 0.999,
-  "query": "NASA's James Webb Space Telescope detected atmospheric water vapor on exoplanet WASP-96b.",
-  "final_verdict": "TRUE",
-  "confidence_score": 0.95,
-  "summary_reasoning": "Multiple authoritative references corroborate the assertion. For example, Wikipedia: James Webb Space Telescope confirms detection of exoplanetary atmospheric composition.",
-  "article_classification": { ... },
+  "final_verdict": "MOSTLY TRUE",
+  "truth_confidence": 0.583,
+  "summary_reasoning": "Found relevant corroborating documentation from wikipedia.org: \"The James Webb Space Telescope (JWST) is a space telescope...\"",
+  "article_classification": {
+    "model_name": "DistilBERT (Fine-Tuned ISOT, max_len=256)",
+    "predicted_label": "REAL",
+    "confidence": 0.9998,
+    "probabilities": { "REAL": 0.9998, "FAKE": 0.0002 }
+  },
   "extracted_claims": [
     {
       "id": 1,
       "claim_text": "NASA's James Webb Space Telescope detected atmospheric water vapor on exoplanet WASP-96b.",
-      "is_verifiable": true,
-      "verdict": "TRUE",
-      "confidence": 0.95
+      "verdict": "MOSTLY TRUE",
+      "confidence": 0.583,
+      "evidence_count": 1
     }
   ],
   "supporting_evidence": [
     {
       "id": 1,
       "title": "Wikipedia: James Webb Space Telescope",
-      "snippet": "In July 2022, NASA revealed transit transmission spectra from WASP-96b showing clear signatures of water vapor...",
+      "snippet": "The James Webb Space Telescope (JWST) is a space telescope designed to conduct infrared astronomy...",
       "source_url": "https://en.wikipedia.org/wiki/James_Webb_Space_Telescope",
       "domain": "wikipedia.org",
-      "relevance_score": 0.88
+      "stance": "SUPPORTING",
+      "relevance_score": 0.58,
+      "credibility_tier": "Reputable Reference"
     }
   ],
   "contradicting_evidence": [],
   "source_credibility": {
     "overall_rating": "High Reliability",
-    "corroboration_score": 0.90,
-    "evaluated_sources": [
-      {
-        "domain": "wikipedia.org",
-        "source_type": "Primary Wire Service / Established Fact-Checker",
-        "credibility_tier": "High Reliability",
-        "is_official_or_academic": false
-      }
-    ]
-  },
-  "pipeline_steps": [
-    "Article Classification (DistilBERT)",
-    "Claim Extraction (1 factual claim(s) identified)",
-    "Evidence Retrieval (2 supporting, 0 contradicting)",
-    "Evidence-Grounded Factual Reasoning",
-    "Source Credibility Assessment"
-  ],
-  "execution_time_seconds": 1.28
+    "corroboration_score": 100.0
+  }
 }
 ```
 
 ---
 
-## 7. Running the Automated Test Suite
+## 8. Deployment Architecture
 
-TruthLens AI includes a master test suite validating all 10 core verification scenarios:
-```powershell
-py -3.11 tests/test_full_suite.py
-```
-**Scenarios Covered:**
-1. Real ISOT article classification (Reuters style)
-2. Fake ISOT article classification (Hyperpartisan clickbait)
-3. Short factual empirical claim
-4. Fabricated / debunked conspiracy claim
-5. Long multi-paragraph news article (>1,000 characters)
-6. Multi-claim extraction and segmentation
-7. Synthetic claim with insufficient evidence (non-hallucination verification)
-8. Empty and short input validation (Pydantic 422 handling)
-9. Network / retrieval timeout failure resilience
-10. External LLM API rate limit / outage fallback resilience
+### Frontend (Vercel)
+The React single-page application is deployed via Vercel Edge Network:
+1. Connect GitHub repository to **Vercel**.
+2. Set **Root Directory** to `frontend`.
+3. Add Environment Variable:
+   ```env
+   VITE_API_BASE_URL=https://truthlens-ai-wag8.onrender.com
+   ```
+4. Deploy!
+
+### Backend (Render Web Service)
+The FastAPI + PyTorch backend is deployed as a managed web service on Render:
+1. Connect GitHub repository to **Render** as a **Web Service**.
+2. **Build Command**:
+   ```bash
+   pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+   ```
+3. **Start Command**:
+   ```bash
+   uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+   ```
+4. **Environment Variables**:
+   ```env
+   PORT=10000
+   CORS_ORIGINS=*
+   LLM_PROVIDER=offline
+   ```
 
 ---
 
-## 8. Known Limitations & Research Roadmap
+## 9. Technology Stack
 
-- **Corpus Domain Shift:** The ISOT dataset consists primarily of 2016–2017 political news. The classical ML and DistilBERT models reflect this vocabulary. TruthLens mitigates this by emphasizing the RAG verification pipeline over raw classifier logits.
-- **Search Latency:** Live search against public endpoints (Wikipedia and DuckDuckGo) introduces network round-trip overhead (typically 1–2 seconds). For production deployments, local vector store indexing (e.g. FAISS or ChromaDB on a verified news snapshot) will eliminate network variance.
-- **Multi-Lingual Verification:** Current fine-tuned checkpoints and extraction regex patterns target English news articles. Extending claim extraction and embeddings to multilingual models is planned for TruthLens v3.
+* **Machine Learning & NLP**: PyTorch, Hugging Face Transformers (`distilbert-base-uncased`), XGBoost, Scikit-learn, Joblib, NumPy, Pandas.
+* **Backend Framework**: FastAPI, Uvicorn, Pydantic v2, HTTPX, Python-dotenv.
+* **Retrieval & Evidence**: Google News RSS, Wikipedia REST API, DuckDuckGo HTML Search.
+* **Frontend**: React 19, Vite, Lucide React Icons.
+* **Deployment & Cloud**: Vercel (Frontend), Render (FastAPI Web Service), Docker.
 
 ---
 
-## 9. License
+## 10. License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-#   T r u t h L e n s - A I  
- 
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.

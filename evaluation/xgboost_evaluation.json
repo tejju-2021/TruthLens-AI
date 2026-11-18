@@ -1,0 +1,55 @@
+{
+  "model": "TF-IDF + XGBoost",
+  "input": "Title + Text",
+  "accuracy": 0.996547756041427,
+  "precision": 0.9950634696755994,
+  "recall": 0.9985845718329794,
+  "f1_score": 0.9968209113387495,
+  "confusion_matrix": [
+    [
+      3561,
+      21
+    ],
+    [
+      6,
+      4233
+    ]
+  ],
+  "training_time_seconds": 270.11,
+  "inference_latency_per_sample_ms": 0.0661,
+  "classification_report": {
+    "Fake": {
+      "precision": 0.9983179142136249,
+      "recall": 0.9941373534338358,
+      "f1-score": 0.9962232480067142,
+      "support": 3582.0
+    },
+    "Real": {
+      "precision": 0.9950634696755994,
+      "recall": 0.9985845718329794,
+      "f1-score": 0.9968209113387495,
+      "support": 4239.0
+    },
+    "accuracy": 0.996547756041427,
+    "macro avg": {
+      "precision": 0.9966906919446121,
+      "recall": 0.9963609626334076,
+      "f1-score": 0.9965220796727319,
+      "support": 7821.0
+    },
+    "weighted avg": {
+      "precision": 0.9965539977839241,
+      "recall": 0.996547756041427,
+      "f1-score": 0.9965471829081972,
+      "support": 7821.0
+    }
+  },
+  "hyperparameters": {
+    "n_estimators": 300,
+    "max_depth": 6,
+    "learning_rate": 0.1,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "tree_method": "hist"
+  }
+}

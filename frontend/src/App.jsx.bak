@@ -1,0 +1,481 @@
+import { useState } from "react";
+import {
+  Search,
+  ShieldCheck,
+  FileText,
+  ArrowRight,
+  CheckCircle2,
+  AlertTriangle,
+  ExternalLink,
+  RotateCcw,
+} from "lucide-react";
+import "./App.css";
+
+function App() {
+  const [claim, setClaim] = useState("");
+  const [showResult, setShowResult] = useState(false);
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleVerify = async () => {
+    if (!claim.trim()) {
+      alert("Please enter a news article or claim first.");
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      const response = await fetch("http://127.0.0.1:8000/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: claim,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Verification failed");
+      }
+  
+      const data = await response.json();
+  
+      setResult(data);
+      setShowResult(true);
+  
+    } catch (error) {
+      console.error(error);
+      alert("Unable to connect to TruthLens backend.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setClaim("");
+    setResult(null);
+    setShowResult(false);
+  };
+
+  return (
+    <div className="app">
+
+      {/* ================= NAVBAR ================= */}
+
+      <nav className="navbar">
+        <div className="brand">
+          <div className="brand-icon">
+            <ShieldCheck size={22} />
+          </div>
+
+          <span>TruthLens AI</span>
+        </div>
+
+        <div className="nav-links">
+          <a href="#home">Home</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#about">About</a>
+        </div>
+      </nav>
+
+
+      {/* ================= MAIN ================= */}
+
+      <main>
+
+        {/* ================= HERO ================= */}
+
+        {!showResult && (
+          <section id="home" className="hero-section">
+
+            <div className="hero-badge">
+              <ShieldCheck size={16} />
+              <span>AI-Powered Fact Verification</span>
+            </div>
+
+            <h1>
+              See Beyond the
+              <span> Headline.</span>
+            </h1>
+
+            <p className="hero-description">
+              TruthLens AI analyzes news, extracts factual claims,
+              retrieves evidence, and explains whether the information
+              can be trusted.
+            </p>
+
+
+            {/* ================= INPUT CARD ================= */}
+
+            <div className="verification-card">
+
+              <div className="input-header">
+                <FileText size={20} />
+                <span>Enter a news article or claim</span>
+              </div>
+
+              <textarea
+                value={claim}
+                onChange={(e) => setClaim(e.target.value)}
+                placeholder="Paste a headline, claim, or complete news article here..."
+                rows={8}
+              />
+
+              <div className="input-footer">
+
+                <span>
+                  {claim.length} characters
+                </span>
+
+                <button onClick={handleVerify} disabled={loading}>
+                  <Search size={18} />
+
+                  <span>
+                    {loading ? "Analyzing..." : "Verify with TruthLens"}
+                  </span>
+
+                  <ArrowRight size={18} />
+                </button>
+
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+
+        {/* ================= RESULT ================= */}
+
+        {showResult && (
+          <section className="result-section">
+
+            <div className="result-top">
+
+              <div>
+                <p className="result-label">
+                  VERIFICATION RESULT
+                </p>
+
+                <h1>
+                  TruthLens Analysis
+                </h1>
+              </div>
+
+              <button
+                className="reset-button"
+                onClick={handleReset}
+              >
+                <RotateCcw size={17} />
+                Check another
+              </button>
+
+            </div>
+
+
+            {/* ================= VERDICT ================= */}
+
+            <div className="verdict-card">
+
+              <div className="verdict-icon">
+                {result?.verdict === "REAL" ? (
+                  <CheckCircle2 size={34} />
+                ) : (
+                  <AlertTriangle size={34} />
+                )}
+              </div>
+
+              <div className="verdict-content">
+
+                <span className="verdict-status">
+                  {result?.verdict === "REAL" ? "LIKELY TRUE" : "LIKELY FAKE"}
+                </span>
+
+                <h2>
+                  The submitted information appears
+                  to be supported by available evidence.
+                </h2>
+
+                <p>
+                  The prediction was generated by the trained
+                  TruthLens DistilBERT classification model.
+                </p>
+
+              </div>
+
+              <div className="confidence">
+
+                <span>
+                  Confidence
+                </span>
+
+                <strong>
+                  {result ? `${(result.confidence * 100).toFixed(2)}%` : "--"}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            {/* ================= CLAIM ================= */}
+
+            <div className="result-card">
+
+              <div className="result-card-header">
+                <FileText size={19} />
+                <span>Submitted Claim</span>
+              </div>
+
+              <p className="submitted-claim">
+                {claim}
+              </p>
+
+            </div>
+
+
+            {/* ================= EXPLANATION ================= */}
+
+            <div className="result-grid">
+
+              <div className="result-card">
+
+                <div className="result-card-header">
+                  <ShieldCheck size={19} />
+                  <span>Why this verdict?</span>
+                </div>
+
+                <p className="explanation">
+                  TruthLens evaluates the submitted information
+                  using machine-learning classification, claim
+                  analysis, and evidence retrieved from relevant
+                  sources.
+                </p>
+
+                <p className="explanation">
+                  The final system will combine these signals
+                  to produce an explainable verification result.
+                </p>
+
+              </div>
+
+
+              {/* ================= SOURCE ANALYSIS ================= */}
+
+              <div className="result-card">
+
+                <div className="result-card-header">
+                  <ShieldCheck size={19} />
+                  <span>Source Analysis</span>
+                </div>
+
+                <div className="source-score">
+
+                  <div>
+                    <span>
+                      Source credibility
+                    </span>
+
+                    <strong>
+                      90%
+                    </strong>
+                  </div>
+
+                  <div className="progress-bar">
+                    <div
+                      className="progress-fill"
+                      style={{ width: "90%" }}
+                    ></div>
+                  </div>
+
+                </div>
+
+                <p className="small-text">
+                  Source credibility will be evaluated
+                  by the TruthLens source analysis module.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            {/* ================= EVIDENCE ================= */}
+
+            <div className="result-card evidence-section">
+
+              <div className="result-card-header">
+                <Search size={19} />
+                <span>Evidence</span>
+              </div>
+
+              <div className="evidence-item">
+
+                <div className="evidence-status supporting">
+                  <CheckCircle2 size={18} />
+                </div>
+
+                <div className="evidence-content">
+
+                  <div className="evidence-title">
+                    Supporting Evidence
+                  </div>
+
+                  <p>
+                    Relevant evidence supporting this claim
+                    will appear here after evidence retrieval.
+                  </p>
+
+                  <span className="source-name">
+                    Trusted information source
+                  </span>
+
+                </div>
+
+                <ExternalLink size={17} />
+
+              </div>
+
+
+              <div className="evidence-item">
+
+                <div className="evidence-status conflicting">
+                  <AlertTriangle size={18} />
+                </div>
+
+                <div className="evidence-content">
+
+                  <div className="evidence-title">
+                    Conflicting Evidence
+                  </div>
+
+                  <p>
+                    Conflicting sources identified by the
+                    verification pipeline will appear here.
+                  </p>
+
+                  <span className="source-name">
+                    Source analysis
+                  </span>
+
+                </div>
+
+                <ExternalLink size={17} />
+
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+
+        {/* ================= HOW IT WORKS ================= */}
+
+        <section
+          id="how-it-works"
+          className="how-section"
+        >
+
+          <div className="section-heading">
+
+            <p>HOW IT WORKS</p>
+
+            <h2>
+              From claim to evidence.
+            </h2>
+
+            <span>
+              TruthLens combines machine learning,
+              evidence retrieval, and AI reasoning
+              to investigate information.
+            </span>
+
+          </div>
+
+
+          <div className="feature-grid">
+
+            <div className="feature-card">
+              <div className="feature-number">
+                01
+              </div>
+
+              <h3>
+                Analyze
+              </h3>
+
+              <p>
+                The system analyzes the submitted news
+                and identifies important factual claims.
+              </p>
+            </div>
+
+
+            <div className="feature-card">
+              <div className="feature-number">
+                02
+              </div>
+
+              <h3>
+                Retrieve
+              </h3>
+
+              <p>
+                Relevant evidence is retrieved from
+                available trusted information sources.
+              </p>
+            </div>
+
+
+            <div className="feature-card">
+              <div className="feature-number">
+                03
+              </div>
+
+              <h3>
+                Verify
+              </h3>
+
+              <p>
+                Evidence and model predictions are combined
+                to produce an explainable verification result.
+              </p>
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+
+
+      {/* ================= FOOTER ================= */}
+
+      <footer id="about">
+
+        <div className="brand">
+
+          <div className="brand-icon">
+            <ShieldCheck size={20} />
+          </div>
+
+          <span>
+            TruthLens AI
+          </span>
+
+        </div>
+
+        <p>
+          AI-powered news and claim verification.
+        </p>
+
+      </footer>
+
+    </div>
+  );
+}
+
+export default App;

@@ -1,0 +1,7 @@
+Model,Input,Accuracy,Precision,Recall,F1 Score
+TF-IDF + Logistic Regression,Title + Text,0.986063,0.981128,0.993395,0.987223
+TF-IDF + Naive Bayes,Title + Text,0.956911,0.960142,0.960368,0.960255
+TF-IDF + Logistic Regression,Title Only,0.942335,0.933807,0.961783,0.947589
+TF-IDF + Logistic Regression,Text Only,0.984912,0.979744,0.992687,0.986173
+TF-IDF + Logistic Regression,Source Cues Removed,0.981716,0.976723,0.989856,0.983245
+TF-IDF + XGBoost,Title + Text,0.996547756041427,0.9950634696755994,0.9985845718329794,0.9968209113387495

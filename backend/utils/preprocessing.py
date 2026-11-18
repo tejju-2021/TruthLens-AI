@@ -1,12 +1,16 @@
 import re
 from typing import Optional
 
+NOISE_PREFIXES = r"^(?:advertisement|sponsored|breaking(?:\s+news)?|live(?:\s+updates)?|updated|watch|exclusive|opinion)\s*[:\-–—]?\s*"
+
 
 def clean_text(text: Optional[str]) -> str:
-    """Normalize whitespace and strip text."""
+    """Normalize whitespace and strip text, removing common web copy-paste prefixes."""
     if not text:
         return ""
     text = str(text)
+    # Strip web copy-paste boilerplate prefixes (e.g. "Advertisement", "Breaking News:")
+    text = re.sub(NOISE_PREFIXES, "", text.strip(), flags=re.IGNORECASE)
     # Normalize multiple whitespace characters
     text = re.sub(r"\s+", " ", text)
     return text.strip()

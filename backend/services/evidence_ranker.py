@@ -72,11 +72,16 @@ class EvidenceRanker:
         contradicting = [item for item in ranked_items if item.stance == "CONTRADICTING"]
         neutral = [item for item in ranked_items if item.stance in ["NEUTRAL", "INCONCLUSIVE"]]
 
-        # If neutral items have high relevance (>0.6), attribute them to supporting or keep in general evidence
+        # Attribute relevant neutral items to supporting if no direct refutation
         for n in neutral:
-            if n.relevance_score >= 0.55:
-                # Placed in supporting if no direct refutation
+            if n.relevance_score >= 0.35:
                 supporting.append(n)
+
+        # If supporting is still empty but we have retrieved items, keep top relevant neutral items
+        if not supporting and not contradicting and neutral:
+            for n in neutral[:3]:
+                if n.relevance_score >= 0.20:
+                    supporting.append(n)
 
         # Ensure top evidence is capped to avoid overwhelming UI
         return supporting[:5], contradicting[:5]

@@ -30,7 +30,9 @@ ESTABLISHED_NEWS_AND_FACTCHECK = {
 RECOGNIZED_MEDIA = {
     "nytimes.com", "wsj.com", "theguardian.com", "washingtonpost.com",
     "bloomberg.com", "ft.com", "economist.com", "npr.org", "pbs.org",
-    "cbsnews.com", "nbcnews.com", "abcnews.go.com", "time.com", "forbes.com"
+    "cbsnews.com", "nbcnews.com", "abcnews.go.com", "time.com", "forbes.com",
+    "indianexpress.com", "thehindu.com", "ndtv.com", "timesofindia.indiatimes.com",
+    "hindustantimes.com", "indiatoday.in", "aljazeera.com", "afp.com", "news.google.com"
 }
 
 
